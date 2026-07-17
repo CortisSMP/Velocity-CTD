@@ -75,13 +75,8 @@ public class HubCommand implements BuiltinCommandDefinition {
     requireNonNull(currentServer);
 
     Deque<String> serversToTry = FallbackServers.resolveFallbackServers(server, player).calculateRetryDeque(server);
-    if (serversToTry.contains(currentServer.getServerInfo().getName())) {
-      player.sendMessage(Component.translatable("velocity.command.hub.fallback-already-connected")
-              .arguments(Component.text(currentServer.getServerInfo().getName())));
-      return 0;
-    }
-
     VelocityRegisteredServer nextServer = serversToTry.stream()
+        .filter((server) -> !currentServer.getServerInfo().getName().equals(server))
         .map(server::getServer)
         .flatMap(Optional::stream)
         .findFirst()
